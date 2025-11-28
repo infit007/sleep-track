@@ -4,6 +4,7 @@ import { Moon, Home, Target, PlusCircle, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface NavbarProps {
   user?: User | null;
@@ -31,7 +32,9 @@ const Navbar = ({ user }: NavbarProps) => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2">
-            <Moon className="h-6 w-6 text-primary" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-primary/10">
+              <Moon className="h-5 w-5 text-primary" />
+            </div>
             <span className="font-bold text-xl">SleepTrack</span>
           </Link>
 
@@ -71,6 +74,7 @@ const Navbar = ({ user }: NavbarProps) => {
                 <LogOut className="h-4 w-4" />
                 Logout
               </Button>
+              <ThemeToggle />
             </div>
           ) : (
             <div className="flex items-center gap-3">
@@ -84,6 +88,7 @@ const Navbar = ({ user }: NavbarProps) => {
                   Register
                 </Button>
               </Link>
+              <ThemeToggle />
             </div>
           )}
         </div>
