@@ -16,6 +16,7 @@ import {
   type SleepLog,
   type SleepSummary,
 } from "@/services/sleepService";
+import { getProfile } from "@/services/profileService";
 import {
   BarChart,
   Bar,
@@ -44,11 +45,41 @@ const Dashboard = () => {
   const [goalProgress, setGoalProgress] = useState<GoalProgress | null>(null);
   const [chartData, setChartData] = useState<{ name: string; hours: number }[]>([]);
   const [weeklyAverage, setWeeklyAverage] = useState(0);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const profile = await getProfile(userId);
+      if (profile?.full_name?.trim()) {
+        setDisplayName(profile.full_name.trim());
+      } else {
+        // Fallback to user_metadata or email
+        const metadataName =
+          (session?.user?.user_metadata?.full_name as string | undefined) ||
+          (session?.user?.user_metadata?.name as string | undefined);
+
+        const fallbackFromEmail = session?.user?.email
+          ? session.user.email.split("@")[0]
+          : "there";
+
+        setDisplayName(metadataName?.trim() || fallbackFromEmail);
+      }
+    } catch (error) {
+      console.error("Error loading profile:", error);
+      // Fallback to email if profile fetch fails
+      const fallbackFromEmail = session?.user?.email
+        ? session.user.email.split("@")[0]
+        : "there";
+      setDisplayName(fallbackFromEmail);
+    }
+  };
 
   useEffect(() => {
     if (!authLoading && session?.user) {
+      loadUserProfile(session.user.id);
       loadDashboardData(session.user.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, session]);
 
   const loadDashboardData = async (userId: string) => {
@@ -96,26 +127,30 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10">
       <Navbar user={session.user} />
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-widest text-primary/70">Dashboard</p>
-            <h1 className="text-3xl font-bold">Rest well, perform better</h1>
-            <p className="text-muted-foreground">
-              Here's a quick summary of your most recent sleep insights.
+            <p className="text-xs sm:text-sm uppercase tracking-widest text-primary/70">Dashboard</p>
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              {displayName ? `${displayName}, here’s your nightly story` : "Rest well, perform better"}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Track your rest, stay consistent, and we’ll surface the patterns for you.
             </p>
           </div>
-          <div className="flex gap-3">
-            <Link to="/log-sleep">
-              <Button className="gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <Link to="/log-sleep" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto gap-2 text-sm sm:text-base">
                 <PlusCircle className="h-4 w-4" />
-                Log sleep
+                <span className="hidden sm:inline">Log sleep</span>
+                <span className="sm:hidden">Log</span>
               </Button>
             </Link>
-            <Link to="/goals">
-              <Button variant="outline" className="gap-2">
+            <Link to="/goals" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto gap-2 text-sm sm:text-base">
                 <Target className="h-4 w-4" />
-                Update goal
+                <span className="hidden sm:inline">Update goal</span>
+                <span className="sm:hidden">Goals</span>
               </Button>
             </Link>
           </div>
@@ -129,42 +164,42 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               <Card className="backdrop-blur bg-card/60 border-border/50">
-                <CardContent className="flex items-center justify-between py-6">
+                <CardContent className="flex items-center justify-between py-4 sm:py-6">
                   <div>
-                    <p className="text-sm text-muted-foreground">Sleep today</p>
-                    <p className="text-3xl font-bold">
+                    <p className="text-xs sm:text-sm text-muted-foreground">Sleep today</p>
+                    <p className="text-2xl sm:text-3xl font-bold">
                       {todaySummary?.totalHours ?? 0}
-                      <span className="text-base font-medium text-muted-foreground ml-1">
+                      <span className="text-sm sm:text-base font-medium text-muted-foreground ml-1">
                         hrs
                       </span>
                     </p>
                   </div>
-                  <Clock className="h-10 w-10 text-primary" />
+                  <Clock className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
                 </CardContent>
               </Card>
               <Card className="backdrop-blur bg-card/60 border-border/50">
-                <CardContent className="flex items-center justify-between py-6">
+                <CardContent className="flex items-center justify-between py-4 sm:py-6">
                   <div>
-                    <p className="text-sm text-muted-foreground">Weekly average</p>
-                    <p className="text-3xl font-bold">
+                    <p className="text-xs sm:text-sm text-muted-foreground">Weekly average</p>
+                    <p className="text-2xl sm:text-3xl font-bold">
                       {weeklyAverage}
-                      <span className="text-base font-medium text-muted-foreground ml-1">
+                      <span className="text-sm sm:text-base font-medium text-muted-foreground ml-1">
                         hrs
                       </span>
                     </p>
                   </div>
-                  <BarChart3 className="h-10 w-10 text-secondary" />
+                  <BarChart3 className="h-8 w-8 sm:h-10 sm:w-10 text-secondary" />
                 </CardContent>
               </Card>
-              <Card className="backdrop-blur bg-card/60 border-border/50">
-                <CardContent className="flex items-center justify-between py-6">
+              <Card className="backdrop-blur bg-card/60 border-border/50 sm:col-span-2 md:col-span-1">
+                <CardContent className="flex items-center justify-between py-4 sm:py-6">
                   <div>
-                    <p className="text-sm text-muted-foreground">Logged nights</p>
-                    <p className="text-3xl font-bold">{activeNights}/7</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Logged nights</p>
+                    <p className="text-2xl sm:text-3xl font-bold">{activeNights}/7</p>
                   </div>
-                  <CalendarDays className="h-10 w-10 text-accent" />
+                  <CalendarDays className="h-8 w-8 sm:h-10 sm:w-10 text-accent" />
                 </CardContent>
               </Card>
             </div>
@@ -182,25 +217,26 @@ const Dashboard = () => {
               )}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
               <Card className="lg:col-span-2 backdrop-blur-sm bg-card/50 border-border/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-primary" />
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     Weekly Sleep Pattern
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={320}>
+                <CardContent className="px-2 sm:px-6">
+                  <ResponsiveContainer width="100%" height={250} className="sm:h-[320px]">
                     <BarChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                      <XAxis dataKey="name" />
-                      <YAxis />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--card))",
                           border: "1px solid hsl(var(--border))",
                           borderRadius: "8px",
+                          fontSize: "12px",
                         }}
                       />
                       <Bar dataKey="hours" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
@@ -210,25 +246,25 @@ const Dashboard = () => {
               </Card>
 
               <Card className="backdrop-blur-sm bg-card/50 border-border/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <NotebookPen className="h-5 w-5 text-primary" />
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <NotebookPen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     Recent Sleep Logs
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   {recentLogs.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Start logging your sleep to see insights here.
                     </p>
                   ) : (
                     recentLogs.map((log) => (
                       <div
                         key={log.id}
-                        className="flex items-center justify-between rounded-lg border border-border/60 bg-background/60 p-3"
+                        className="flex items-center justify-between rounded-lg border border-border/60 bg-background/60 p-2 sm:p-3"
                       >
-                        <div>
-                          <p className="font-medium">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base truncate">
                             {format(new Date(log.sleep_time), "EEE, MMM d")}
                           </p>
                           <p className="text-xs text-muted-foreground">
@@ -236,7 +272,7 @@ const Dashboard = () => {
                             {format(new Date(log.wake_time), "h:mm a")}
                           </p>
                         </div>
-                        <span className="text-lg font-semibold text-primary">{log.duration}h</span>
+                        <span className="text-base sm:text-lg font-semibold text-primary ml-2">{log.duration}h</span>
                       </div>
                     ))
                   )}

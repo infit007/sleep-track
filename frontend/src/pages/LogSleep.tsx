@@ -69,12 +69,12 @@ const LogSleep = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10">
       <Navbar user={session.user} />
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
           <div>
-            <p className="text-sm uppercase tracking-widest text-primary/70">Log Sleep</p>
-            <h1 className="text-3xl font-bold">Capture your latest rest</h1>
-            <p className="text-muted-foreground">
+            <p className="text-xs sm:text-sm uppercase tracking-widest text-primary/70">Log Sleep</p>
+            <h1 className="text-2xl sm:text-3xl font-bold">Capture your latest rest</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Enter when you went to bed and when you woke up. We will calculate the rest.
             </p>
           </div>

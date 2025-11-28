@@ -98,11 +98,11 @@ const Goals = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10">
       <Navbar user={session.user} />
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6">
         <div>
-          <p className="text-sm uppercase tracking-widest text-primary/70">Goals</p>
-          <h1 className="text-3xl font-bold">Dial in your rest routine</h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm uppercase tracking-widest text-primary/70">Goals</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Dial in your rest routine</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Set a daily target, then measure how the last 7 nights stack up.
           </p>
         </div>

@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,6 +19,15 @@ const Register = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your name",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast({
@@ -44,6 +54,9 @@ const Register = () => {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: {
+          full_name: name.trim(),
+        },
       },
     });
 
@@ -65,21 +78,32 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-md backdrop-blur-sm bg-card/50 border-border/50">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 rounded-full bg-gradient-night">
-              <Moon className="h-8 w-8 text-white" />
+        <CardHeader className="space-y-1 px-4 sm:px-6 pt-6 sm:pt-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="p-2.5 sm:p-3 rounded-full bg-gradient-night">
+              <Moon className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-xl sm:text-2xl text-center">Create an account</CardTitle>
+          <CardDescription className="text-center text-sm sm:text-base">
             Enter your details to start tracking your sleep
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-6 sm:pb-8">
           <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="e.g. Jay"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

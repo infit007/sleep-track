@@ -51,20 +51,20 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-md backdrop-blur-sm bg-card/50 border-border/50">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 rounded-full bg-gradient-night">
-              <Moon className="h-8 w-8 text-white" />
+        <CardHeader className="space-y-1 px-4 sm:px-6 pt-6 sm:pt-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="p-2.5 sm:p-3 rounded-full bg-gradient-night">
+              <Moon className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-xl sm:text-2xl text-center">Welcome back</CardTitle>
+          <CardDescription className="text-center text-sm sm:text-base">
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-6 sm:pb-8">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
